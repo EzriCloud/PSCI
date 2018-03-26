@@ -15,7 +15,7 @@ Function Disconnect-Me {
         throw "ENV Variable AzureResourceGroupName is not set"
     }
 
-    Disconnect-LoadBalancerNode -LoadBalancerName $env:AzureLoadBalancerName -ResourceGroupName $env:AzureResourceGroupName -VMName $env:ComputerName -Verbose:$VerbosePreference
+    return (Disconnect-LoadBalancerNode -LoadBalancerName $env:AzureLoadBalancerName -ResourceGroupName $env:AzureResourceGroupName -VMName $env:ComputerName -Verbose:$VerbosePreference)
 }
 
 
@@ -49,28 +49,7 @@ Function Disconnect-LoadBalancerNode {
         } else {
             throw "We attempted to remove $VMName from the service, but a check of the load balancer indicaited it was still in service. "
         }
-        
+
     }
 
 }
-
-
-		
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

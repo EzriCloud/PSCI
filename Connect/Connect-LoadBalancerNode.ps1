@@ -14,7 +14,7 @@ Function Connect-Me {
         throw "ENV Variable AzureResourceGroupName is not set"
     }
 
-    Connect-LoadBalancerNode -LoadBalancerName $env:AzureLoadBalancerName -ResourceGroupName $env:AzureResourceGroupName -VMName $env:ComputerName -Verbose:$VerbosePreference
+    return (Connect-LoadBalancerNode -LoadBalancerName $env:AzureLoadBalancerName -ResourceGroupName $env:AzureResourceGroupName -VMName $env:ComputerName -Verbose:$VerbosePreference)
 }
 
 
@@ -31,17 +31,17 @@ Function Connect-LoadBalancerNode {
 
 
     if ($CurrentStatus.CurrentlyInService) {
-        Write-Verbose "$VMName was already in service. Nothing to do here."
+        Write-Warning "$VMName was already in service. Nothing to do here."
         return $True
     } else {
 
         $lb = Get-AzureRmLoadBalancer -Name $LoadBalancerName -ResourceGroupName $ResourceGroupName
-        
+
         $MachineInfo = Get-AzureVMInfo -VMName $VMName -ResourceGroupName $ResourceGroupName
 
 
         $nic = $MachineInfo.NIC
-        $nic.IpConfigurations[0].LoadBalancerBackendAddressPools = $lb.BackendAddressPools    
+        $nic.IpConfigurations[0].LoadBalancerBackendAddressPools = $lb.BackendAddressPools
         $value = Set-AzureRmNetworkInterface -NetworkInterface $nic
 
         $NewStatus = Get-NodeLoadBalancerStatus -LoadBalancerName $LoadBalancerName -ResourceGroupName $ResourceGroupName -VMName $VMName
@@ -52,12 +52,12 @@ Function Connect-LoadBalancerNode {
         } else {
             throw "We attempted to place $VMName back into service, but a check of the load balancer indicaited it was still not servicing customers. "
         }
-        
-        
+
+
 
     }
 
-		
+
 
 
 
